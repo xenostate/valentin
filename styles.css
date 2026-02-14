@@ -1,0 +1,137 @@
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:wght@600;700&display=swap");
+
+:root {
+  --bg-1: #fff1f6;
+  --bg-2: #ffe6f0;
+  --accent: #e84a70;
+  --accent-dark: #bf2f55;
+  --text: #2f1a22;
+  --card: rgba(255, 255, 255, 0.88);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  color: var(--text);
+  background: radial-gradient(circle at top, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
+}
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: min(560px, 100%);
+  background: var(--card);
+  padding: 28px 24px 36px;
+  border-radius: 24px;
+  box-shadow: 0 18px 50px rgba(232, 74, 112, 0.15);
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+.title {
+  font-size: clamp(26px, 5vw, 40px);
+  margin: 0 0 20px;
+  letter-spacing: 0.5px;
+}
+
+.cta {
+  border: none;
+  background: linear-gradient(140deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 12px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 12px 20px rgba(232, 74, 112, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 8px 16px rgba(232, 74, 112, 0.3);
+}
+
+.heart-wrap {
+  margin-top: 28px;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+
+.heart-wrap.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.heart {
+  width: min(260px, 80vw);
+  aspect-ratio: 1 / 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  transform: rotate(-45deg);
+  box-shadow: 0 18px 30px rgba(191, 47, 85, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.heart::before {
+  top: -35%;
+  left: 0;
+}
+
+.heart::after {
+  right: -35%;
+  top: 0;
+}
+
+.heart-content {
+  width: 75%;
+  height: 75%;
+  display: grid;
+  place-items: center;
+  transform: rotate(45deg);
+  z-index: 1;
+}
+
+.heart-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  max-height: 100%;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 22px 18px 28px;
+  }
+
+  .cta {
+    width: 100%;
+  }
+}
