@@ -1,25 +1,102 @@
-<!doctype html>
-<html lang="ru">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Валентинка для Яси</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="page">
-      <section class="card">
-        <h1 class="title">Яся нажми на кнопку</h1>
-        <button class="cta" id="showHeart" type="button">Нажать</button>
-        <div class="heart-wrap" id="heartWrap" aria-hidden="true">
-        <div class="heart" role="img" aria-label="Валентинка">
-          <div class="heart-content">
-            <img class="heart-image" src="writing.png" alt="Ты самая сильная милая смешная" />
-          </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Korean Reading Practice</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- API Key Setup Screen -->
+  <div id="setup" class="screen setup-screen">
+    <div class="setup-card">
+      <div class="logo">한국어</div>
+      <h1>Korean Reading Practice</h1>
+      <p class="subtitle">Read Korean texts, mark unknown words, get instant explanations.</p>
+      <div class="input-group">
+        <label for="apiKeyInput">OpenAI API Key</label>
+        <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" />
+      </div>
+      <button id="saveKeyBtn" class="btn btn-primary">Get Started</button>
+      <p class="note">Your key is stored only in your browser (localStorage) and never sent anywhere except directly to OpenAI.</p>
+    </div>
+  </div>
+
+  <!-- Main App Screen -->
+  <div id="app" class="screen app-screen hidden">
+    <header class="app-header">
+      <div class="header-left">
+        <span class="logo-small">한국어</span>
+        <h1>Korean Reading Practice</h1>
+      </div>
+      <div class="header-right">
+        <select id="difficultySelect">
+          <option value="beginner">Beginner (A1–A2)</option>
+          <option value="intermediate" selected>Intermediate (B1–B2)</option>
+          <option value="advanced">Advanced (C1–C2)</option>
+        </select>
+        <button id="generateBtn" class="btn btn-primary">Generate Text</button>
+        <button id="changeKeyBtn" class="btn btn-ghost">Change Key</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+
+      <!-- Empty state -->
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon">📖</div>
+        <p>Choose a difficulty level and click <strong>Generate Text</strong> to begin.</p>
+      </div>
+
+      <!-- Loading -->
+      <div id="loadingState" class="loading-state hidden">
+        <div class="spinner"></div>
+        <p>Generating Korean text…</p>
+      </div>
+
+      <!-- Reading View -->
+      <div id="readingView" class="reading-view hidden">
+        <div class="reading-hint">
+          <span class="hint-icon">💡</span>
+          Click on any word you don't understand — it will be highlighted. When you're done reading, click the button below.
         </div>
+        <div id="koreanText" class="korean-text"></div>
+        <div class="reading-actions">
+          <span id="markedCount" class="marked-count">0 words marked</span>
+          <button id="doneBtn" class="btn btn-success">Done — Explain Marked Words</button>
         </div>
-      </section>
+      </div>
+
+      <!-- Explaining Loading -->
+      <div id="explainingState" class="loading-state hidden">
+        <div class="spinner"></div>
+        <p>Looking up your marked words…</p>
+      </div>
+
+      <!-- Explanations View -->
+      <div id="explanationsView" class="explanations-view hidden">
+        <div class="original-text-box">
+          <h3>Original Text</h3>
+          <div id="originalTextDisplay" class="original-text"></div>
+        </div>
+        <h2>Word Explanations</h2>
+        <div id="explanationList" class="explanation-list"></div>
+        <div class="explanation-actions">
+          <button id="newTextBtn" class="btn btn-primary">Generate New Text</button>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div id="errorState" class="error-state hidden">
+        <div class="error-icon">⚠️</div>
+        <p id="errorMessage">Something went wrong.</p>
+        <button id="retryBtn" class="btn btn-primary">Try Again</button>
+      </div>
+
     </main>
-    <script src="script.js"></script>
-  </body>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
