@@ -13,13 +13,13 @@
     <div class="setup-card">
       <div class="logo">한국어</div>
       <h1>Korean Reading Practice</h1>
-      <p class="subtitle">Read Korean texts, mark unknown words, get instant explanations.</p>
+      <p class="subtitle">Read Korean texts, tap words to get instant translations, then quiz yourself.</p>
       <div class="input-group">
         <label for="apiKeyInput">OpenAI API Key</label>
         <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" />
       </div>
       <button id="saveKeyBtn" class="btn btn-primary">Get Started</button>
-      <p class="note">Your key is stored only in your browser (localStorage) and never sent anywhere except directly to OpenAI.</p>
+      <p class="note">Your key is stored only in your browser (localStorage) and sent only to OpenAI.</p>
     </div>
   </div>
 
@@ -49,7 +49,7 @@
         <p>Choose a difficulty level and click <strong>Generate Text</strong> to begin.</p>
       </div>
 
-      <!-- Loading -->
+      <!-- Loading text generation -->
       <div id="loadingState" class="loading-state hidden">
         <div class="spinner"></div>
         <p>Generating Korean text…</p>
@@ -59,31 +59,41 @@
       <div id="readingView" class="reading-view hidden">
         <div class="reading-hint">
           <span class="hint-icon">💡</span>
-          Click on any word you don't understand — it will be highlighted. When you're done reading, click the button below.
+          Click any word to see its translation. When you're done, start the quiz.
         </div>
         <div id="koreanText" class="korean-text"></div>
         <div class="reading-actions">
-          <span id="markedCount" class="marked-count">0 words marked</span>
-          <button id="doneBtn" class="btn btn-success">Done — Explain Marked Words</button>
+          <span id="lookedUpCount" class="marked-count">0 words looked up</span>
+          <button id="quizBtn" class="btn btn-success">Start Quiz →</button>
         </div>
       </div>
 
-      <!-- Explaining Loading -->
-      <div id="explainingState" class="loading-state hidden">
-        <div class="spinner"></div>
-        <p>Looking up your marked words…</p>
-      </div>
-
-      <!-- Explanations View -->
-      <div id="explanationsView" class="explanations-view hidden">
-        <div class="original-text-box">
-          <h3>Original Text</h3>
-          <div id="originalTextDisplay" class="original-text"></div>
+      <!-- Quiz View -->
+      <div id="quizView" class="quiz-view hidden">
+        <div class="quiz-header">
+          <div class="quiz-header-top">
+            <div>
+              <h2>Matching Quiz</h2>
+              <p class="quiz-subtitle">Match each Korean word to its English meaning</p>
+            </div>
+            <div class="quiz-stats">
+              <span id="quizMatched">0</span>/<span id="quizTotal">0</span>
+              <span id="quizMistakes" class="quiz-mistakes hidden"> · <span id="mistakesCount">0</span> mistake<span id="mistakesPlural"></span></span>
+            </div>
+          </div>
         </div>
-        <h2>Word Explanations</h2>
-        <div id="explanationList" class="explanation-list"></div>
-        <div class="explanation-actions">
-          <button id="newTextBtn" class="btn btn-primary">Generate New Text</button>
+        <div id="quizBoard" class="quiz-board">
+          <div id="koreanColumn" class="quiz-column">
+            <div class="column-label">Korean</div>
+          </div>
+          <div id="englishColumn" class="quiz-column">
+            <div class="column-label">Meaning</div>
+          </div>
+        </div>
+        <div id="quizComplete" class="quiz-complete hidden">
+          <div class="complete-icon">🎉</div>
+          <div id="completionText" class="completion-text"></div>
+          <button id="quizNewTextBtn" class="btn btn-primary">Generate New Text</button>
         </div>
       </div>
 
@@ -96,6 +106,8 @@
 
     </main>
   </div>
+
+  <!-- Word popup (created dynamically, kept here as template anchor) -->
 
   <script src="script.js"></script>
 </body>
