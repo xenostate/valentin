@@ -7,7 +7,7 @@ function createWindow() {
     height: 800,
     minWidth: 640,
     minHeight: 500,
-    title: 'Korean Reading Practice',
+    title: 'LeetKor',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

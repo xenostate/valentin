@@ -3,111 +3,426 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Korean Reading Practice</title>
+  <title>LeetKor</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-  <!-- API Key Setup Screen -->
   <div id="setup" class="screen setup-screen">
     <div class="setup-card">
-      <div class="logo">한국어</div>
-      <h1>Korean Reading Practice</h1>
-      <p class="subtitle">Read Korean texts, tap words to get instant translations, then quiz yourself.</p>
+      <div class="logo">릿코</div>
+      <h1>LeetKor</h1>
+      <p class="subtitle">TOPIK-style Korean study with reading drills, listening practice, writing feedback, mini mocks, and review queues.</p>
       <div class="input-group">
         <label for="apiKeyInput">OpenAI API Key</label>
         <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" />
       </div>
-      <button id="saveKeyBtn" class="btn btn-primary">Get Started</button>
-      <p class="note">Your key is stored only in your browser (localStorage) and sent only to OpenAI.</p>
+      <button id="saveKeyBtn" class="btn btn-primary">Enter Study Mode</button>
+      <p class="note">Your key is stored locally in this app and used only for generating study content and feedback.</p>
     </div>
   </div>
 
-  <!-- Main App Screen -->
   <div id="app" class="screen app-screen hidden">
     <header class="app-header">
       <div class="header-left">
-        <span class="logo-small">한국어</span>
-        <h1>Korean Reading Practice</h1>
+        <span class="logo-small">릿코</span>
+        <div>
+          <h1>LeetKor</h1>
+          <p class="header-subtitle">Problem sets for TOPIK preparation</p>
+        </div>
       </div>
       <div class="header-right">
-        <select id="difficultySelect">
-          <option value="beginner">Beginner (A1–A2)</option>
-          <option value="intermediate" selected>Intermediate (B1–B2)</option>
-          <option value="advanced">Advanced (C1–C2)</option>
-        </select>
-        <button id="generateBtn" class="btn btn-primary">Generate Text</button>
+        <label class="compact-field">
+          <span>Track</span>
+          <select id="trackSelect">
+            <option value="topik1">TOPIK I</option>
+            <option value="topik2-mid" selected>TOPIK II (Level 3-4)</option>
+            <option value="topik2-adv">TOPIK II (Level 5-6)</option>
+          </select>
+        </label>
         <button id="changeKeyBtn" class="btn btn-ghost">Change Key</button>
       </div>
     </header>
 
-    <main class="app-main">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <button class="nav-btn is-active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn" data-view="reading">Reading Lab</button>
+        <button class="nav-btn" data-view="listening">Listening Lab</button>
+        <button class="nav-btn" data-view="writing">Writing Lab</button>
+        <button class="nav-btn" data-view="mock">Mini Mock</button>
+        <button class="nav-btn" data-view="review">Review Notebook</button>
+      </aside>
 
-      <!-- Empty state -->
-      <div id="emptyState" class="empty-state">
-        <div class="empty-icon">📖</div>
-        <p>Choose a difficulty level and click <strong>Generate Text</strong> to begin.</p>
-      </div>
-
-      <!-- Loading text generation -->
-      <div id="loadingState" class="loading-state hidden">
-        <div class="spinner"></div>
-        <p>Generating Korean text…</p>
-      </div>
-
-      <!-- Reading View -->
-      <div id="readingView" class="reading-view hidden">
-        <div class="reading-hint">
-          <span class="hint-icon">💡</span>
-          Click any word to see its translation. When you're done, start the quiz.
-        </div>
-        <div id="koreanText" class="korean-text"></div>
-        <div class="reading-actions">
-          <span id="lookedUpCount" class="marked-count">0 words looked up</span>
-          <button id="quizBtn" class="btn btn-success">Start Quiz →</button>
-        </div>
-      </div>
-
-      <!-- Quiz View -->
-      <div id="quizView" class="quiz-view hidden">
-        <div class="quiz-header">
-          <div class="quiz-header-top">
+      <main class="app-main">
+        <section id="dashboardView" class="view-panel">
+          <div class="hero-card">
             <div>
-              <h2>Matching Quiz</h2>
-              <p class="quiz-subtitle">Match each Korean word to its English meaning</p>
+              <div class="eyebrow">Study Command Center</div>
+              <h2>Build TOPIK skill like a problem-solving routine</h2>
+              <p id="dashboardSummary" class="hero-copy">Generate your first set and start building momentum.</p>
             </div>
-            <div class="quiz-stats">
-              <span id="quizMatched">0</span>/<span id="quizTotal">0</span>
-              <span id="quizMistakes" class="quiz-mistakes hidden"> · <span id="mistakesCount">0</span> mistake<span id="mistakesPlural"></span></span>
+            <div class="hero-actions">
+              <button id="dashboardReadingBtn" class="btn btn-primary btn-auto">Start Reading Drill</button>
+              <button id="dashboardMockBtn" class="btn btn-secondary btn-auto">Generate Mini Mock</button>
             </div>
           </div>
-        </div>
-        <div id="quizBoard" class="quiz-board">
-          <div id="koreanColumn" class="quiz-column">
-            <div class="column-label">Korean</div>
-          </div>
-          <div id="englishColumn" class="quiz-column">
-            <div class="column-label">Meaning</div>
-          </div>
-        </div>
-        <div id="quizComplete" class="quiz-complete hidden">
-          <div class="complete-icon">🎉</div>
-          <div id="completionText" class="completion-text"></div>
-          <button id="quizNewTextBtn" class="btn btn-primary">Generate New Text</button>
-        </div>
-      </div>
 
-      <!-- Error -->
-      <div id="errorState" class="error-state hidden">
-        <div class="error-icon">⚠️</div>
-        <p id="errorMessage">Something went wrong.</p>
-        <button id="retryBtn" class="btn btn-primary">Try Again</button>
-      </div>
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span class="stat-label">Sessions</span>
+              <strong id="sessionsStat" class="stat-value">0</strong>
+              <span class="stat-subtle">completed study actions</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Reading Accuracy</span>
+              <strong id="readingAccuracyStat" class="stat-value">0%</strong>
+              <span class="stat-subtle">reading and mock questions</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Saved Words</span>
+              <strong id="savedWordsStat" class="stat-value">0</strong>
+              <span class="stat-subtle">your active review bank</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-label">Writing Submissions</span>
+              <strong id="writingStat" class="stat-value">0</strong>
+              <span class="stat-subtle">prompts you have answered</span>
+            </article>
+          </div>
 
-    </main>
+          <div class="dashboard-grid">
+            <article class="panel-card">
+              <div class="panel-head">
+                <h3>Recommended Next Step</h3>
+              </div>
+              <div id="nextStepCard" class="recommendation-card"></div>
+            </article>
+            <article class="panel-card">
+              <div class="panel-head">
+                <h3>Weak Areas</h3>
+              </div>
+              <div id="weakAreasList" class="stack-list"></div>
+            </article>
+            <article class="panel-card">
+              <div class="panel-head">
+                <h3>Recent Activity</h3>
+              </div>
+              <div id="recentActivityList" class="stack-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="readingView" class="view-panel hidden">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Reading Lab</div>
+              <h2>Practice with exam-style Korean passages</h2>
+              <p class="panel-copy">Generate a passage, inspect vocabulary, then answer TOPIK-style reading questions and vocabulary matches.</p>
+            </div>
+            <div class="toolbar">
+              <label class="compact-field">
+                <span>Passage Type</span>
+                <select id="readingTypeSelect">
+                  <option value="mixed" selected>Mixed</option>
+                  <option value="notice">Notice / Sign</option>
+                  <option value="dialogue">Dialogue</option>
+                  <option value="article">Short Article</option>
+                  <option value="opinion">Opinion Passage</option>
+                </select>
+              </label>
+              <button id="generateReadingBtn" class="btn btn-primary btn-auto">Generate Reading Set</button>
+            </div>
+          </div>
+
+          <div id="readingEmpty" class="empty-state compact-empty">
+            <p>Create a reading set to start drilling TOPIK-style comprehension.</p>
+          </div>
+
+          <div id="readingLoading" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Building your reading set…</p>
+          </div>
+
+          <div id="readingContent" class="hidden">
+            <div class="split-grid">
+              <article class="panel-card">
+                <div class="meta-row">
+                  <span id="readingTrackBadge" class="badge"></span>
+                  <span id="readingTypeBadge" class="badge badge-soft"></span>
+                </div>
+                <h3 id="readingTitle"></h3>
+                <div id="readingText" class="korean-text"></div>
+                <div class="reading-actions">
+                  <span id="lookedUpCount" class="marked-count">0 words looked up</span>
+                  <div class="inline-actions">
+                    <button id="readingQuizBtn" class="btn btn-secondary btn-auto">Open Vocab Quiz</button>
+                    <button id="readingQuestionsBtn" class="btn btn-success btn-auto">Answer Reading Questions</button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="panel-card">
+                <div class="panel-head">
+                  <h3>Passage Notes</h3>
+                </div>
+                <div id="readingObjectives" class="stack-list"></div>
+                <div class="tip-box">
+                  <strong>TOPIK habit:</strong> solve first, then inspect why distractors are wrong. Try not to click every word before you attempt the questions.
+                </div>
+              </article>
+            </div>
+
+            <article id="readingQuestionsCard" class="panel-card hidden">
+              <div class="panel-head">
+                <h3>Reading Questions</h3>
+                <span id="readingQuestionStats" class="subtle-inline"></span>
+              </div>
+              <div id="readingQuestionsList" class="question-list"></div>
+              <div class="inline-actions">
+                <button id="submitReadingQuestionsBtn" class="btn btn-primary btn-auto">Submit Answers</button>
+              </div>
+              <div id="readingResults" class="results-box hidden"></div>
+            </article>
+
+            <article id="vocabQuizCard" class="panel-card hidden">
+              <div class="panel-head">
+                <h3>Vocabulary Match</h3>
+                <span class="subtle-inline">Built from words you clicked</span>
+              </div>
+              <div class="quiz-header">
+                <div class="quiz-header-top">
+                  <div>
+                    <p class="quiz-subtitle">Match each Korean word to its English meaning</p>
+                  </div>
+                  <div class="quiz-stats">
+                    <span id="quizMatched">0</span>/<span id="quizTotal">0</span>
+                    <span id="quizMistakes" class="quiz-mistakes hidden"> · <span id="mistakesCount">0</span> mistake<span id="mistakesPlural"></span></span>
+                  </div>
+                </div>
+              </div>
+              <div id="quizBoard" class="quiz-board">
+                <div id="koreanColumn" class="quiz-column">
+                  <div class="column-label">Korean</div>
+                </div>
+                <div id="englishColumn" class="quiz-column">
+                  <div class="column-label">Meaning</div>
+                </div>
+              </div>
+              <div id="quizComplete" class="quiz-complete hidden">
+                <div class="complete-icon">✓</div>
+                <div id="completionText" class="completion-text"></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="listeningView" class="view-panel hidden">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Listening Lab</div>
+              <h2>Hear a prompt, answer fast, reveal the transcript</h2>
+              <p class="panel-copy">Uses your system speech engine for Korean playback, with AI-generated transcript, choices, and explanation.</p>
+            </div>
+            <div class="toolbar">
+              <label class="compact-field">
+                <span>Listening Type</span>
+                <select id="listeningTypeSelect">
+                  <option value="conversation" selected>Conversation</option>
+                  <option value="announcement">Announcement</option>
+                  <option value="instruction">Instruction</option>
+                  <option value="opinion">Opinion</option>
+                </select>
+              </label>
+              <button id="generateListeningBtn" class="btn btn-primary btn-auto">Generate Listening Drill</button>
+            </div>
+          </div>
+
+          <div id="listeningEmpty" class="empty-state compact-empty">
+            <p>Generate a listening drill, play the audio, and answer before revealing the transcript.</p>
+          </div>
+
+          <div id="listeningLoading" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Creating listening material…</p>
+          </div>
+
+          <div id="listeningContent" class="hidden">
+            <article class="panel-card">
+              <div class="meta-row">
+                <span id="listeningTrackBadge" class="badge"></span>
+                <span id="listeningTypeBadge" class="badge badge-soft"></span>
+              </div>
+              <h3 id="listeningPromptTitle"></h3>
+              <div class="inline-actions">
+                <button id="playListeningBtn" class="btn btn-primary btn-auto">Play Audio</button>
+                <button id="replayListeningBtn" class="btn btn-ghost btn-auto">Replay</button>
+                <button id="revealTranscriptBtn" class="btn btn-secondary btn-auto">Reveal Transcript</button>
+              </div>
+              <div id="listeningQuestion" class="question-shell"></div>
+              <div class="inline-actions">
+                <button id="submitListeningBtn" class="btn btn-success btn-auto">Check Answer</button>
+              </div>
+              <div id="listeningFeedback" class="results-box hidden"></div>
+              <div id="listeningTranscriptBox" class="transcript-box hidden"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="writingView" class="view-panel hidden">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Writing Lab</div>
+              <h2>Practice TOPIK responses with structure-focused feedback</h2>
+              <p class="panel-copy">Generate a prompt, write your answer, then get feedback on clarity, grammar, organization, and exam readiness.</p>
+            </div>
+            <div class="toolbar">
+              <label class="compact-field">
+                <span>Task Type</span>
+                <select id="writingTypeSelect">
+                  <option value="summary">Short Response</option>
+                  <option value="chart">Chart Description</option>
+                  <option value="argument" selected>Argument Essay</option>
+                </select>
+              </label>
+              <button id="generateWritingBtn" class="btn btn-primary btn-auto">Generate Prompt</button>
+            </div>
+          </div>
+
+          <div id="writingEmpty" class="empty-state compact-empty">
+            <p>Generate a prompt to start your writing practice.</p>
+          </div>
+
+          <div id="writingLoading" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Preparing a writing task…</p>
+          </div>
+
+          <div id="writingContent" class="hidden">
+            <div class="split-grid">
+              <article class="panel-card">
+                <div class="meta-row">
+                  <span id="writingTrackBadge" class="badge"></span>
+                  <span id="writingTypeBadge" class="badge badge-soft"></span>
+                </div>
+                <h3 id="writingTitle"></h3>
+                <p id="writingPrompt" class="prompt-text"></p>
+                <div id="writingGuidance" class="stack-list"></div>
+              </article>
+              <article class="panel-card">
+                <div class="panel-head">
+                  <h3>Your Response</h3>
+                  <span id="writingCharCount" class="subtle-inline">0 chars</span>
+                </div>
+                <textarea id="writingAnswer" class="writing-area" placeholder="Write your answer in Korean here."></textarea>
+                <div class="inline-actions">
+                  <button id="evaluateWritingBtn" class="btn btn-success btn-auto">Evaluate Writing</button>
+                </div>
+              </article>
+            </div>
+            <article id="writingFeedbackCard" class="panel-card hidden">
+              <div class="panel-head">
+                <h3>Feedback</h3>
+              </div>
+              <div id="writingFeedback" class="feedback-grid"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="mockView" class="view-panel hidden">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Mini Mock</div>
+              <h2>Simulate pressure with a short exam block</h2>
+              <p class="panel-copy">A compact mixed section with timed reading, listening, and writing-style tasks.</p>
+            </div>
+            <div class="toolbar">
+              <button id="generateMockBtn" class="btn btn-primary btn-auto">Generate Mini Mock</button>
+            </div>
+          </div>
+
+          <div id="mockEmpty" class="empty-state compact-empty">
+            <p>Generate a mini mock to train under time pressure.</p>
+          </div>
+
+          <div id="mockLoading" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Building your mini mock exam…</p>
+          </div>
+
+          <div id="mockContent" class="hidden">
+            <article class="panel-card">
+              <div class="mock-head">
+                <div>
+                  <div class="meta-row">
+                    <span id="mockTrackBadge" class="badge"></span>
+                    <span class="badge badge-soft">Timed Practice</span>
+                  </div>
+                  <h3 id="mockTitle"></h3>
+                </div>
+                <div id="mockTimer" class="timer-pill">20:00</div>
+              </div>
+              <div id="mockSections" class="mock-sections"></div>
+              <div class="inline-actions">
+                <button id="submitMockBtn" class="btn btn-success btn-auto">Submit Mini Mock</button>
+              </div>
+              <div id="mockResults" class="results-box hidden"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="reviewView" class="view-panel hidden">
+          <div class="panel-header">
+            <div>
+              <div class="eyebrow">Review Notebook</div>
+              <h2>Revisit words, mistakes, and writing lessons</h2>
+              <p class="panel-copy">Your personalized backlog for weak vocabulary and repeated errors.</p>
+            </div>
+            <div class="toolbar">
+              <button id="startReviewQuizBtn" class="btn btn-primary btn-auto">Start Saved Vocab Quiz</button>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel-card">
+              <div class="panel-head">
+                <h3>Saved Vocabulary</h3>
+              </div>
+              <div id="savedWordsList" class="stack-list"></div>
+            </article>
+            <article class="panel-card">
+              <div class="panel-head">
+                <h3>Mistake Notebook</h3>
+              </div>
+              <div id="mistakeNotebookList" class="stack-list"></div>
+            </article>
+            <article class="panel-card">
+              <div class="panel-head">
+                <h3>Writing Lessons</h3>
+              </div>
+              <div id="writingLessonsList" class="stack-list"></div>
+            </article>
+          </div>
+
+          <article id="savedQuizCard" class="panel-card hidden">
+            <div class="panel-head">
+              <h3>Saved Vocabulary Quiz</h3>
+            </div>
+            <div id="savedQuizBoard" class="quiz-board">
+              <div id="savedKoreanColumn" class="quiz-column">
+                <div class="column-label">Korean</div>
+              </div>
+              <div id="savedEnglishColumn" class="quiz-column">
+                <div class="column-label">Meaning</div>
+              </div>
+            </div>
+            <div id="savedQuizComplete" class="quiz-complete hidden">
+              <div id="savedQuizCompletionText" class="completion-text"></div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
   </div>
-
-  <!-- Word popup (created dynamically, kept here as template anchor) -->
 
   <script src="script.js"></script>
 </body>

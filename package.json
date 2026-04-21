@@ -1,7 +1,7 @@
 {
-  "name": "korean-reading-practice",
+  "name": "leetkor",
   "version": "1.0.0",
-  "description": "Korean language learning desktop app",
+  "description": "TOPIK-focused Korean study desktop app",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
